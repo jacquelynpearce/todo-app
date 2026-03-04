@@ -73,6 +73,7 @@ export default function App() {
 
           <footer className="footer">
             <span>{activeCount} {activeCount === 1 ? 'item' : 'items'} left</span>
+            <span>{todos.length} tasks total</span>
 
             <nav>
               {(['all', 'active', 'completed'] as Filter[]).map(f => (

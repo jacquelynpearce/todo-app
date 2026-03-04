@@ -104,6 +104,19 @@ test.describe('Filtering tasks', () => {
 });
 
 test.describe('Footer', () => {
+  test('should show the total count of all tasks', async ({ page }) => {
+    const input = page.getByPlaceholder('What needs to be done?');
+
+    await input.fill('Buy groceries');
+    await page.keyboard.press('Enter');
+    await input.fill('Walk the dog');
+    await page.keyboard.press('Enter');
+    await input.fill('Read a book');
+    await page.keyboard.press('Enter');
+
+    await expect(page.getByText('3 tasks total')).toBeVisible();
+  });
+
   test('should show the count of remaining active tasks', async ({ page }) => {
     const input = page.getByPlaceholder('What needs to be done?');
 
