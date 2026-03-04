@@ -11,9 +11,78 @@ body {
 }
 
 .app {
-  max-width: 550px;
+  display: flex;
+  max-width: 800px;
   margin: 60px auto;
   padding: 0 16px;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 12px 8px;
+  gap: 4px;
+}
+
+.list-item {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+}
+
+.list-item:hover {
+  background: #f5f5f5;
+}
+
+.list-item.selected {
+  background: #f0e6e7;
+  color: #b83f45;
+  font-weight: 500;
+}
+
+.new-list-btn {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.new-list-btn:hover {
+  color: #b83f45;
+}
+
+.list-name-input {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  width: 100%;
+}
+
+.list-name-input:focus {
+  border-color: #b83f45;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
 }
 
 h1 {

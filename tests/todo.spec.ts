@@ -145,3 +145,47 @@ test.describe('Footer', () => {
     await expect(page.getByRole('listitem').filter({ hasText: 'Buy groceries' })).not.toBeVisible();
   });
 });
+
+test.describe('Multiple lists', () => {
+  test('should show a default list in the sidebar on load', async ({ page }) => {
+    await expect(page.getByRole('navigation', { name: 'Lists' }).getByRole('button', { name: 'My List' })).toBeVisible();
+  });
+
+  test('should create a new list via the New List button', async ({ page }) => {
+    await page.getByRole('button', { name: 'New List' }).click();
+    await page.getByPlaceholder('List name').fill('Work');
+    await page.keyboard.press('Enter');
+
+    await expect(page.getByRole('navigation', { name: 'Lists' }).getByRole('button', { name: 'Work' })).toBeVisible();
+  });
+
+  test('should switch between lists using the sidebar', async ({ page }) => {
+    await page.getByRole('button', { name: 'New List' }).click();
+    await page.getByPlaceholder('List name').fill('Work');
+    await page.keyboard.press('Enter');
+
+    await page.getByPlaceholder('What needs to be done?').fill('Send report');
+    await page.keyboard.press('Enter');
+
+    await page.getByRole('navigation', { name: 'Lists' }).getByRole('button', { name: 'My List' }).click();
+    await page.getByPlaceholder('What needs to be done?').fill('Buy groceries');
+    await page.keyboard.press('Enter');
+
+    await page.getByRole('navigation', { name: 'Lists' }).getByRole('button', { name: 'Work' }).click();
+    await expect(page.getByRole('listitem').filter({ hasText: 'Send report' })).toBeVisible();
+    await expect(page.getByRole('listitem').filter({ hasText: 'Buy groceries' })).not.toBeVisible();
+  });
+
+  test('should keep tasks separate per list', async ({ page }) => {
+    await page.getByRole('button', { name: 'New List' }).click();
+    await page.getByPlaceholder('List name').fill('Personal');
+    await page.keyboard.press('Enter');
+
+    await page.getByPlaceholder('What needs to be done?').fill('Exercise');
+    await page.keyboard.press('Enter');
+
+    await page.getByRole('navigation', { name: 'Lists' }).getByRole('button', { name: 'My List' }).click();
+
+    await expect(page.getByRole('listitem').filter({ hasText: 'Exercise' })).not.toBeVisible();
+  });
+});
