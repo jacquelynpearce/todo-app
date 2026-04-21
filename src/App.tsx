@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 
 type Filter = 'all' | 'active' | 'completed';
@@ -22,6 +22,10 @@ export default function App() {
   const [filter, setFilter] = useState<Filter>('all');
   const [addingList, setAddingList] = useState(false);
   const [newListName, setNewListName] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState('');
+  const [dragOverId, setDragOverId] = useState<number | null>(null);
+  const dragIdRef = useRef<number>(-1);
 
   const activeList = lists.find(l => l.id === activeListId)!;
   const todos = activeList.todos;
@@ -43,6 +47,27 @@ export default function App() {
 
   function deleteTodo(id: number) {
     updateTodos(todos => todos.filter(t => t.id !== id));
+  }
+
+  function startEditing(todo: Todo) {
+    setEditingId(todo.id);
+    setEditText(todo.text);
+  }
+
+  function commitEdit(id: number) {
+    const text = editText.trim();
+    if (text) updateTodos(todos => todos.map(t => t.id === id ? { ...t, text } : t));
+    setEditingId(null);
+  }
+
+  function moveTodo(fromId: number, toId: number) {
+    updateTodos(todos => {
+      const from = todos.findIndex(t => t.id === fromId);
+      const to = todos.findIndex(t => t.id === toId);
+      const reordered = [...todos];
+      reordered.splice(to, 0, reordered.splice(from, 1)[0]);
+      return reordered;
+    });
   }
 
   function clearCompleted() {
@@ -112,14 +137,38 @@ export default function App() {
           <>
             <ul className="todo-list">
               {filtered.map(todo => (
-                <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+                <li
+                  key={todo.id}
+                  className={[todo.completed ? 'completed' : '', dragOverId === todo.id ? 'drag-over' : ''].join(' ').trim()}
+                  draggable
+                  onDragStart={() => { dragIdRef.current = todo.id; }}
+                  onDragOver={e => { e.preventDefault(); setDragOverId(todo.id); }}
+                  onDragLeave={() => setDragOverId(null)}
+                  onDrop={() => { moveTodo(dragIdRef.current, todo.id); setDragOverId(null); }}
+                  onDragEnd={() => setDragOverId(null)}
+                >
+                  <span className="drag-handle" aria-hidden="true">⋮⋮</span>
                   <input
                     type="checkbox"
                     checked={todo.completed}
                     aria-label={todo.text}
                     onChange={() => toggleTodo(todo.id)}
                   />
-                  <span>{todo.text}</span>
+                  {editingId === todo.id ? (
+                    <input
+                      className="edit-todo"
+                      value={editText}
+                      autoFocus
+                      onChange={e => setEditText(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') commitEdit(todo.id);
+                        if (e.key === 'Escape') setEditingId(null);
+                      }}
+                      onBlur={() => commitEdit(todo.id)}
+                    />
+                  ) : (
+                    <span onDoubleClick={() => startEditing(todo)}>{todo.text}</span>
+                  )}
                   <button aria-label="Delete" onClick={() => deleteTodo(todo.id)}>✕</button>
                 </li>
               ))}
