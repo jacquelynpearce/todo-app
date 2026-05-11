@@ -202,11 +202,11 @@ h1 {
 .footer-left {
   display: flex;
   gap: 12px;
-  min-width: 130px;
+  flex: 1;
 }
 
 .footer-right {
-  min-width: 100px;
+  flex: 1;
   display: flex;
   justify-content: flex-end;
 }
