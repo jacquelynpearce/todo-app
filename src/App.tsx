@@ -175,8 +175,10 @@ export default function App() {
             </ul>
 
             <footer className="footer">
-              <span>{activeCount} {activeCount === 1 ? 'item' : 'items'} left</span>
-              <span>{todos.length} tasks total</span>
+              <div className="footer-left">
+                <span>{activeCount} {activeCount === 1 ? 'item' : 'items'} left</span>
+                <span>{todos.length} tasks total</span>
+              </div>
 
               <nav>
                 {(['all', 'active', 'completed'] as Filter[]).map(f => (
@@ -191,9 +193,11 @@ export default function App() {
                 ))}
               </nav>
 
-              {hasCompleted && (
-                <button onClick={clearCompleted}>Clear completed</button>
-              )}
+              <div className="footer-right">
+                {hasCompleted && (
+                  <button onClick={clearCompleted}>Clear completed</button>
+                )}
+              </div>
             </footer>
           </>
         )}
